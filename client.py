@@ -5,12 +5,12 @@ from Crypto.PublicKey import RSA
 from Crypto.Cipher import PKCS1_OAEP
 
 
-public_key = open('public_key', 'r').read()
-# private_key = open('private_key', 'r').read()
-# print(str(public_key))
-rsakey = RSA.importKey(public_key)
-rsakey = PKCS1_OAEP.new(rsakey)
-encrypted = rsakey.encrypt(message)
+# public_key = open('public_key', 'r').read()
+# # private_key = open('private_key', 'r').read()
+# # print(str(public_key))
+# rsakey = RSA.importKey(public_key)
+# rsakey = PKCS1_OAEP.new(rsakey)
+# encrypted = rsakey.encrypt(message)
 
 
 s = socket.socket()

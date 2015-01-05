@@ -3,11 +3,11 @@ import hashlib
 from Crypto.Hash import SHA256
 from Crypto.PublicKey import RSA 
 
-public_key = open('public_key', 'r').read().strip("'")[2:]
-# print(public_key)
-rsakey = RSA.importKey(public_key)
-rsakey = PKCS1_OAEP.new(rsakey)
-# encrypted = rsakey.encrypt(message)
+# public_key = open('public_key', 'r').read().strip("'")[2:]
+# # print(public_key)
+# rsakey = RSA.importKey(public_key)
+# rsakey = PKCS1_OAEP.new(rsakey)
+# # encrypted = rsakey.encrypt(message)
 
 
 s = socket.socket()
