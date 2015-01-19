@@ -10,28 +10,32 @@ private_key = open('private_key', 'r').read()
 print(str(public_key))
 rsakey = RSA.importKey(public_key)
 rsakey = PKCS1_OAEP.new(rsakey)
-encrypted = rsakey.encrypt(message)
-
 
 
 s = socket.socket()
 host = socket.gethostname()
 port = 30000
-certs = ["cert1", "cert2"]
+cert = "cert1"
+cert = rsakey.encrypt(cert)
 
 s.connect((host, port))
-msg = open('msg', 'r')
-a = msg.read()
-if len(str(a)) != 0:
-	notify = "new patch"
-	s.send(notify.encode())
-	print "Notified."
-	if s.recv(1024).decode() in certs:
-		print "Certificate success! Send patch file."
-		s.send(str(a).encode())
+
+
+msg = s.recv(1024);
+if msg == "new patch":
+	print "new patch?"
+	s.send(cert)
+	msg = s.recv(1024)
+	if msg == "Certificate success":
+		patch = s.recv(1024).decode()
+		print patch
 	else:
-		print "certificate failed"
+		print "Certificate is wrong, plz check"
 else:
-	print "no patch!"
+	print "No patch, keep doing"
+	# recv = open("recv", "w")
+	# recv.write(msg)
+	# print "patch success"
+	# break
 
 s.close
