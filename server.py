@@ -3,17 +3,22 @@ import hashlib
 from Crypto.Hash import SHA256
 from Crypto.PublicKey import RSA 
 from Crypto.Cipher import PKCS1_OAEP
+from base64 import b64decode
 
 public_key = open('public_key', 'r').read()
-print(public_key)
+private_key = open('private_key', 'r').read()
 rsakey = RSA.importKey(public_key)
 rsakey = PKCS1_OAEP.new(rsakey)
 print(rsakey) 
-# encrypted = rsakey.encrypt(message)
+rsakey_pri = RSA.importKey(private_key)
+rsakey_pri = PKCS1_OAEP.new(rsakey_pri)
+print(rsakey_pri)
+
 
 # open patch
 msg = open('msg', 'r')
 a = msg.read()
+a = rsakey.encrypt(a)
 
 s = socket.socket()
 host = socket.gethostname()
@@ -29,20 +34,23 @@ print 'Got connection from', addr
 while True:
 	if len(str(a)) != 0:
 		notify = "new patch"
-		c.send(notify.encode()) #Need encrypt??
+		c.send(notify)
 		print "Notified."
 		client_cert = c.recv(1024)
-		cert = rsakey.decrypt(client_cert)
+		# Decode certification
+		cert = rsakey_pri.decrypt(client_cert)
 		if cert in certs:
 			print "Certificate success! Send patch file."
 			c.send("Certificate success")
-			c.send(str(a).encode())
+			c.send(a)
+			break
 		else:
 			c.send("Certificate failed")
 			print "certificate failed"
 			break
 	else:
-		notify = "no patch"
-		c.send(notify.encode()) #Need encrypt??
+		notify = "No patch"
+		c.send(notify)
 		print "no patch!"
+		break
 c.close()
