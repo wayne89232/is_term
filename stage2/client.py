@@ -1,8 +1,8 @@
 import socket
 import hashlib
-from Crypto.Hash import SHA256
 from Crypto.PublicKey import RSA 
 from Crypto.Cipher import PKCS1_OAEP
+from Crypto.Signature import PKCS1_v1_5 
 from base64 import b64decode
 
 def hash_md5(message):
@@ -26,10 +26,29 @@ def check_hash(message):
 def get_message(message):
 	return message[1024:len(message)-16]
 
+def sign_data(key, data):
+	from Crypto.Hash import MD5
+	h = MD5.new()
+	h.update(data)
+	sign = key.sign(h) 
+	# sign = key.sign(hash_md5(data)) 
+	return sign
+
+def verify_sign(key, sign, data):
+	from Crypto.Hash import MD5
+	h = MD5.new()
+	h.update(data)	
+	if key.verify(h, sign):
+		return True
+	return False
+
+def get_header(data):
+	return data.split(chr(00))[0]
 
 public_key = open('server_public_key', 'r').read()
 private_key = open('client_private_key', 'r').read()
 rsakey = RSA.importKey(public_key)
+sign_key = PKCS1_v1_5.new(rsakey) 
 rsakey = PKCS1_OAEP.new(rsakey)
 # print(rsakey) 
 rsakey_pri = RSA.importKey(private_key)
@@ -60,8 +79,12 @@ if msg == "new patch":
 			print "hash check failed!!"
 		else:
 			print "hash check passed!!"
-			patch = rsakey_pri.decrypt(get_message(patch))
-			print patch
+			if verify_sign(sign_key,get_header(patch), get_message(patch)):
+				print "Signature verification passed"
+				patch = rsakey_pri.decrypt(get_message(patch))
+				print patch
+			else:
+				print "Signature verification failed"
 	else:
 		print "Certificate is wrong, plz check"
 else:
