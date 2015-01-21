@@ -28,13 +28,11 @@ def get_message(message):
 
 
 public_key = open('client_public_key', 'r').read()
-private_key = open('server_private_key', 'r').read()
 rsakey = RSA.importKey(public_key)
 rsakey = PKCS1_OAEP.new(rsakey)
-# print(rsakey) 
+private_key = open('server_private_key', 'r').read()
 rsakey_pri = RSA.importKey(private_key)
 rsakey_pri = PKCS1_OAEP.new(rsakey_pri)
-# print(rsakey_pri)
 
 # open patch
 msg = open('msg', 'r')

@@ -36,19 +36,21 @@ c, addr = s.accept()
 print 'Got connection from', addr
 
 while True:
+	request = c.recv(4096)
 	#If in the list
 	check = 1
 	for x in xrange(1,2):
-		if addr == IP_list[x, 1]:
+		if addr == IP_list[x][1]:
 			check = 0;
 			break
 	if check == 1:
-		print "You are not in list"
+		print "Not in list"
+		c.send("You are not in list")
 		break
 
 	# recv the request
 	#request has Des_IP|T1
-	request = c.recv(1024)
+	
 
 	#Find B public key
 	b_IP = get_desIP(request)
@@ -61,6 +63,7 @@ while True:
 			break;
 	if check == 1:
 		print "Des is not in the list"
+		c.send("Des is not in the list")
 		break
 	
 	#pack B public key|AIP|BIP|T1

@@ -4,6 +4,7 @@ from Crypto.Hash import SHA256
 from Crypto.PublicKey import RSA 
 from Crypto.Cipher import PKCS1_OAEP
 from base64 import b64decode
+from random import randint
 
 def hash_md5(message):
 	hash_md5 = hashlib.md5()
@@ -26,15 +27,25 @@ def check_hash(message):
 def get_message(message):
 	return message[1024:len(message)-16]
 
+def get_first(message):
+	end_loc = message.find("|")
+	return message[1:end_loc - 1]
 
-public_key = open('server_public_key', 'r').read()
-private_key = open('client_private_key', 'r').read()
+def get_next(message):
+	start_loc = message.find("|")
+	end_loc = message.find("|", start_loc + 1)
+	return message[start_loc + 1:end_loc - 1]
+
+public_key = open('client_public_key', 'r').read()
 rsakey = RSA.importKey(public_key)
 rsakey = PKCS1_OAEP.new(rsakey)
-# print(rsakey) 
+private_key = open('client_private_key', 'r').read()
 rsakey_pri = RSA.importKey(private_key)
 rsakey_pri = PKCS1_OAEP.new(rsakey_pri)
-# print(rsakey_pri)
+KDC_public_key = open('KDC_private_key', 'r').read()
+rsakey_KDC = RSA.importKey(KDC_public_key)
+rsakey_KDC = PKCS1_OAEP.new(rsakey_KDC)
+
 
 
 s = socket.socket()
@@ -42,10 +53,38 @@ host = socket.gethostname()
 port = 30000
 cert = "cert1"
 
-
-
 s.connect((host, port))
+msg = s.recv(4096)
+msg = rsakey_pri.decrypt(msg)
+s_num = int(msg)
 
+request = "192.168.1.62"
+k = socket.socket()
+k = socket.socket()
+k_host = socket.gethostname()
+k_port = 40000
+k.connect((k_host, k_port))
+k.send(request)
+pack = k.recv(4096)
+pack = rsakey_KDC.decrypt(pack)
+num = randint(0,1023)
+
+if pack == "You are not in list":
+	print pack
+elif pack == "Des is not in the list":
+	print pack
+	
+# Get Server Public Key
+pk = rsakey
+
+msg = str(s_num) + "|" + str(num)
+msg = pk.encrypt(msg)
+s.send(msg)
+response = s.recv(4096)
+if int(response) == num:
+	print "He is Server"
+else:
+	print "You are not talking to server"
 
 msg = s.recv(4096);
 if msg == "new patch":

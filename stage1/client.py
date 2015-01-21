@@ -28,24 +28,17 @@ def get_message(message):
 
 
 public_key = open('server_public_key', 'r').read()
-private_key = open('client_private_key', 'r').read()
 rsakey = RSA.importKey(public_key)
 rsakey = PKCS1_OAEP.new(rsakey)
-# print(rsakey) 
+private_key = open('client_private_key', 'r').read()
 rsakey_pri = RSA.importKey(private_key)
 rsakey_pri = PKCS1_OAEP.new(rsakey_pri)
-# print(rsakey_pri)
-
 
 s = socket.socket()
 host = socket.gethostname()
 port = 30000
 cert = "cert1"
-
-
-
 s.connect((host, port))
-
 
 msg = s.recv(4096);
 if msg == "new patch":
