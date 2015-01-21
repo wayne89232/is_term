@@ -3,7 +3,7 @@ import hashlib
 from Crypto.Hash import SHA256
 from Crypto.PublicKey import RSA 
 from Crypto.Cipher import PKCS1_OAEP
-from base64 import b64decode
+
 
 public_key = open('public_key', 'r').read()
 private_key = open('private_key', 'r').read()
