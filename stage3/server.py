@@ -40,6 +40,7 @@ rsakey_pri = PKCS1_OAEP.new(rsakey_pri)
 msg = open('msg', 'r')
 a = msg.read()
 
+
 s = socket.socket()
 host = socket.gethostname()
 port = 30000
@@ -53,6 +54,13 @@ print 'Got connection from', addr
 
 while True:
 	if len(str(a)) != 0:
+		# connect to KDC
+		request = addr + 
+
+
+
+
+
 		notify = "new patch"
 		c.send(notify)
 		print "Notified."

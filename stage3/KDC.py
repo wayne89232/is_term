@@ -5,15 +5,16 @@ from Crypto.PublicKey import RSA
 from Crypto.Cipher import PKCS1_OAEP
 
 def get_desIP(message):
-	end_loc = message.find("|")
-	return message[1:end_loc - 1]
+	start_loc = message.find("|");
+	end_loc = message.find("|", start_loc + 1)
+	return message[start_loc + 1:end_loc - 1]
 
 def pack_key(key, message):
 	return key + "|" + message
 
 
-public_key = open('KDC_public_key', 'r').read()
-private_key = open('KDC_private_key', 'r').read()
+public_key = open('public_key', 'r').read()
+private_key = open('private_key', 'r').read()
 rsakey = RSA.importKey(public_key)
 rsakey = PKCS1_OAEP.new(rsakey)
 print(rsakey) 
@@ -47,7 +48,7 @@ while True:
 		break
 
 	# recv the request
-	#request has Des_IP|T1
+	#request has AIP|BIP|T1
 	request = c.recv(1024)
 
 	#Find B public key
