@@ -3,7 +3,7 @@ import hashlib
 from Crypto.Hash import SHA256
 from Crypto.PublicKey import RSA 
 from Crypto.Cipher import PKCS1_OAEP
-
+from base64 import b64decode
 
 def hash_md5(message):
 	hash_md5 = hashlib.md5()
