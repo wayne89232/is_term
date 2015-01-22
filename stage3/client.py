@@ -58,15 +58,13 @@ msg = s.recv(4096)
 msg = rsakey_pri.decrypt(msg)
 s_num = int(msg)
 
-request = "192.168.1.62"
-k = socket.socket()
+request = "10.122.108.202"
 k = socket.socket()
 k_host = socket.gethostname()
 k_port = 40000
 k.connect((k_host, k_port))
 k.send(request)
 pack = k.recv(4096)
-pack = rsakey_KDC.decrypt(pack)
 num = randint(0,1023)
 
 if pack == "You are not in list":
@@ -75,7 +73,9 @@ elif pack == "Des is not in the list":
 	print pack
 	
 # Get Server Public Key
-pk = rsakey
+pack = RSA.importKey(pack)
+pack = PKCS1_OAEP.new(pack)
+pk = pack
 
 msg = str(s_num) + "|" + str(num)
 msg = pk.encrypt(msg)

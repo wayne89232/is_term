@@ -83,9 +83,10 @@ while True:
 			print pack
 			break
 		# Get Client Public key
-		pack = rsakey_KDC.decrypt(pack)
+		pack = RSA.importKey(pack)
+		pack = PKCS1_OAEP.new(pack)
 		
-		pk = rsakey
+		pk = pack
 		# Challenge Client
 		msg = pk.encrypt(str(num))
 		c.send(msg)
@@ -109,7 +110,7 @@ while True:
 			print "hash check failed!!"
 		else:
 		# Decode certification
-			print "hash check passed!!"s
+			print "hash check passed!!"
 			cert = rsakey_pri.decrypt(get_message(client_cert))
 			if cert in certs:
 				print "Certificate success! Send patch file."
